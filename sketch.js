@@ -3,7 +3,7 @@ var human,humanImage,tree;
 var gameState="start";
 var road,roadImage,invisibleGround;
 var factory,factory1,factory2,factory3;
-var treesGroup,factoriesGroup,fruitsGroup,smokeGroup;
+var treesGroup,factoriesGroup,fruitsGroup,smokeGroup,randomArrowGroup;
 var orangeImage,mangoImage,appleImage,bananaImage;
 var reset;
 var gameOverImage,resetImage;
@@ -13,7 +13,8 @@ var score,pollutionLevel;
 var youlost,youwin;
 var info,infoImg;
 var jumpSound,gameOverSound,achievementSound,victorySound,negativeSound;
-var arrow;
+var arrow,arrowScore;
+var randomArrow;
 function preload(){
     
     tree1=loadImage("tree1.png");
@@ -103,12 +104,14 @@ function setup(){
 
     score=5
     pollutionLevel=45
+    arrowScore=5
 
     treesGroup =createGroup();
     factoriesGroup =createGroup();
     fruitsGroup = createGroup();
     smokeGroup = createGroup();
     arrowGroup = createGroup();
+    randomArrowGroup= createGroup();
 }
 function draw(){
     background(0);
@@ -128,7 +131,7 @@ function draw(){
         spawnFactories();
         spawnFruits();
         spawnSmoke();
- 
+        spawnArrows();
         bg.velocityX=-2
         bg.scale=1.3
         if(keyDown("UP_ARROW")&& human.y>=500){
@@ -206,8 +209,9 @@ function draw(){
             negativeSound.play();
             
         }
-        if(keyDown("space")){
+        if(keyDown("space")&&arrowScore>0){
            createArrow();
+           arrowScore=arrowScore-1
         }
 
         if(arrowGroup.isTouching(factoriesGroup)){
@@ -216,6 +220,11 @@ function draw(){
             score=score+1
             pollutionLevel=pollutionLevel-1
             achievementSound.play();
+          }
+
+          if(randomArrowGroup.isTouching(human)){
+              randomArrowGroup.destroyEach()
+              arrowScore=arrowScore+1
           }
         if(pollutionLevel<=0||score>=50){
           gameState="end"
@@ -289,6 +298,7 @@ function draw(){
     textSize(30);
     text("Health: "+ score, 70,200);
     text("Pollution Level : "+pollutionLevel,70,250);
+    text("Number of Arrows : "+arrowScore,70,300);
 }
 }
 
@@ -307,7 +317,7 @@ if(pollutionLevel>=50||score<=0){
   pollutionLevel=45
   if(mousePressedOver(start)){
     human.visible=true
-    bg.visible=true
+    
     road.visible=true
     human.x=400
     human.y=580
@@ -316,7 +326,7 @@ if(pollutionLevel>=50||score<=0){
   function createArrow() {
     arrow= createSprite(100, 100, 60, 10);
     arrow.addImage(arrowImage);
-    arrow.x = 360;
+    arrow.x = human.x;
     arrow.y=human.y;
     arrow.velocityX = 4;
     arrow.lifetime = 300;
@@ -417,5 +427,16 @@ function spawnSmoke(){
         smoke.depth = human.depth;
         human.depth = human.depth + 1;
        
+    }
+}
+
+function spawnArrows(){
+    if (frameCount % 203 === 0){
+        randomArrow=createSprite(800,590,70,30);
+        randomArrow.velocityX=-2
+        randomArrow.addImage(arrowImage);
+        randomArrow.scale=0.03
+        randomArrow.lifetime =400
+        randomArrowGroup.add(randomArrow);
     }
 }
