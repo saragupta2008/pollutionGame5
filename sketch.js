@@ -15,6 +15,7 @@ var info,infoImg;
 var jumpSound,gameOverSound,achievementSound,victorySound,negativeSound;
 var arrow,arrowScore;
 var randomArrow;
+var level;
 function preload(){
     
     tree1=loadImage("tree1.png");
@@ -105,6 +106,7 @@ function setup(){
     score=5
     pollutionLevel=45
     arrowScore=5
+    level=1
 
     treesGroup =createGroup();
     factoriesGroup =createGroup();
@@ -160,9 +162,11 @@ function draw(){
         }
         if(pollutionLevel<=40){
             bg.addImage(backgroundImage2)
+            level=2
         }
         if(pollutionLevel<=30){
-            bg.addImage(backgroundImage3)
+            bg.addImage(backgroundImage3);
+            level=3
             if (frameCount % 379 === 0){
             var rand = Math.round(random(1,3));
             switch(rand) {
@@ -183,9 +187,11 @@ function draw(){
         }
         if(pollutionLevel<=20){
             bg.addImage(backgroundImage4)
+            level=4
         }
         if(pollutionLevel<=10){
             bg.addImage(backgroundImage5)
+            level=5
         }
       // console.log(frameCount)
        road.velocityX=-2
@@ -299,6 +305,9 @@ function draw(){
     text("Health: "+ score, 70,200);
     text("Pollution Level : "+pollutionLevel,70,250);
     text("Number of Arrows : "+arrowScore,70,300);
+
+    fill("black");
+    text("LEVEL "+level,300,100);
 }
 }
 
@@ -431,7 +440,7 @@ function spawnSmoke(){
 }
 
 function spawnArrows(){
-    if (frameCount % 203 === 0){
+    if (frameCount % 183 === 0){
         randomArrow=createSprite(800,590,70,30);
         randomArrow.velocityX=-2
         randomArrow.addImage(arrowImage);
